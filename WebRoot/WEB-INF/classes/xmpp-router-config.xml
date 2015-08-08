@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+
+	<!-- =============================================================== -->
+	<!-- ROUTER -->
+	<!-- =============================================================== -->
+
+	<bean id="iqRouter" class="org.soxmpp.server.xmpp.router.IQRouter">
+		<property name="sessionManager" ref="SessionManager"></property>
+		<property name="iqHandlers">
+			<list>
+				<ref bean="iqAuthHandler"/>
+				<ref bean="iqPingHandler"/>
+				<ref bean="iqRegisterHandler"/>
+				<ref bean="iqRosterHandler"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="messagerRouter" class="org.soxmpp.server.xmpp.router.MessageRouter">
+		<property name="sessionManager" ref="SessionManager"></property>
+	</bean>
+	<bean id="presenceRouter" class="org.soxmpp.server.xmpp.router.PresenceRouter">
+		<property name="sessionManager" ref="SessionManager"></property>
+		<property name="presenceUpdateHandler" ref="presenceUpdateHandler"></property>
+	</bean>
+
+	<bean id="packetDeliverer" class="org.soxmpp.server.xmpp.router.PacketDeliverer"
+		scope="singleton">
+		<property name="sessionManager" ref="SessionManager"></property>
+	</bean>
+	
+	<bean id="packetRouter" class="org.soxmpp.server.xmpp.router.PacketRouter" scope="singleton">
+		<property name="iqRouter" ref="iqRouter"></property>
+		<property name="messageRouter" ref="messagerRouter"></property>
+		<property name="presenceRouter" ref="presenceRouter"></property>
+	</bean>
+</beans>
